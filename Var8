@@ -1,0 +1,134 @@
+#include <iostream>
+#include <cstring>
+#include <string>
+using namespace std;
+class Fruit
+{
+static int id_set;
+friend void print(Fruit fr);
+friend class Manager;
+private:
+	int id;
+	string name;
+	double price;
+public:
+	Fruit() {
+		id_set++;
+		id = id_set;
+		name = "None";
+		price = 0;
+	}
+	Fruit(string fr_name, double fr_price) {
+		id_set++;
+		id = id_set;
+		name = fr_name;
+		price = fr_price;
+	}
+	void get(string namer,double initial_price)
+	{
+		name = namer;
+		price = initial_price;
+	}
+	~Fruit(){}
+	
+};
+class Manager {
+public:
+	void set_price(double price_changed, Fruit& fruit)
+	{
+		fruit.price = price_changed;
+	}
+};
+void print(Fruit fr)
+{
+	cout << "Id - " << fr.id << "\nName - " << fr.name << "\nPrice - " << fr.price << endl;
+}
+int Fruit::id_set=0;
+int main()
+{
+	Fruit apple("apple", 5), pear("pear", 6), banana("banana", 7);
+	Fruit* market;
+	Manager manage;
+	int checker = 0,search=0;
+	int amount=0;
+	double initial_price,price_changed;
+	string namer;
+	do
+	{
+		cout << "Enter amount of fruits on you market(it already has apple,pear and banana): ";
+		cin >> amount;
+		if (amount < 1)cout << "Incorrect amount. Try again.\n";
+		fflush(stdin);
+	} while (amount < 1);
+	market = new Fruit[amount];
+	for (int i = 0; i < amount; i++)
+	{
+		
+			cout << "Enter name of the " << i + 1 << " fruit: ";
+			cin >> namer;
+			do
+		{
+			cout << "Enter initial price: ";
+			cin >> initial_price;
+		} while (initial_price <= 0);
+		market[i].get(namer, initial_price);
+	}
+	while (true)
+	{
+		cout << "What do you want?\n1-Change(or set) price of fruits on market\n2-Print list of fruits\n3-Exit" << endl;
+		cin >> checker;
+		switch (checker)
+		{
+		case 1:
+		{cout << "Enter id of fruit,which price you want to change: ";
+		cin >> search;
+		if (search<1 || search>amount+3) {
+			cout << "Fruit is not found\n";
+			continue;
+		}
+		do
+		{
+			cout << "Enter new price: ";
+			cin >> price_changed;
+		} while (price_changed <= 0);
+		}
+		if (search <= 3)
+		{
+			switch (search)
+			{
+			case 1:
+			{manage.set_price(price_changed, apple);
+			continue;
+			}
+			case 2:
+			{manage.set_price(price_changed, pear);
+			continue;
+			}
+			case 3:
+			{manage.set_price(price_changed, banana);
+			continue;
+			}
+			}
+		}
+		else
+		manage.set_price(price_changed, market[search - 4]);
+		continue;
+
+		case 2:
+		{
+			print(apple);
+			print(pear);
+			print(banana);
+			for (int i = 0; i < amount; i++)
+			{
+				print(market[i]);
+			}
+			continue;
+		}
+		case 3:
+			return 0;
+		}
+	}
+	
+	return 0;
+}
